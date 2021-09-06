@@ -8,7 +8,7 @@ exports.create = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         // console.log(token);
-        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + req.body.id_user + ", " + req.body.title + ", " + req.body.url + ")";
+        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.id_user) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
         connection.connect((err) => {
             connection.query(addPost, (err, rows) => {
                 let user = utils.getUser(token);
@@ -26,7 +26,9 @@ exports.create = (req, res, next) => {
 //Suppression d'un post
 exports.delete = (req, res, next) => {
     try {
-        const posts = "DELETE FROM gifs WHERE id = " + req.body.id;
+        const token = req.headers.authorization.split(' ')[1];
+
+        const posts = "DELETE FROM gifs WHERE id = " + connection.escape(req.body.id) + "AND" ;
         connection.connect((err) => {
             connection.query(posts, (err, rows) => {
                 console.log(rows);

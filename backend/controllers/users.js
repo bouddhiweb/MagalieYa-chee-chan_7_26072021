@@ -22,8 +22,8 @@ exports.signup = async (req, res, next) => {
                     password: hash
                 }
                 try {
-                    const checkDB ="SELECT email FROM users WHERE email=" + "'" + userForm.email + "'";
-                    const addUser = "INSERT INTO users (username, email, password) values ('" + userForm.username + "', '" + userForm.email + "', '" + hash + "')";
+                    const checkDB ="SELECT email FROM users WHERE email=" + connection.escape(userForm.email);
+                    const addUser = "INSERT INTO users (username, email, password) values (" + connection.escape(userForm.username) + ", " + connection.escape(userForm.email) + ", '" + hash + "')";
                     connection.connect((err) => {
                         connection.query(checkDB,(err,rows) => {
                             const user = rows[0];
@@ -54,7 +54,7 @@ exports.signup = async (req, res, next) => {
 // Retrouve un utilisateur existant
 exports.login = (req, res, next) => {
     try {
-        const emailQuery ="SELECT id, username, email, password FROM users WHERE email=" + "'" + req.body.email + "'";
+        const emailQuery ="SELECT id, username, email, password FROM users WHERE email=" + connection.escape(req.body.email);
         connection.connect((err) => {
             connection.query(emailQuery,(err,rows) => {
                 const user = rows[0];
