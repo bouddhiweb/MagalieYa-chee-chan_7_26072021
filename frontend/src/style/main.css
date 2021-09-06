@@ -1,0 +1,251 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css?family=Raleway:400,100,200,300,500,600,800,700,900");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+/* variables : breakpoint - template : Material UI */
+/* Colors variables - couleur primaire, secondaire, tertiaire... */
+@import "base/_app.css";
+.icons {
+  margin: 0 15px 30px 0;
+  font-size: 1.5em;
+  padding: 15px 20px 15px 20px;
+}
+.icons:hover {
+  border-radius: 100%;
+  background-color: #2F3136;
+}
+.icons a {
+  color: #5E6167;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("../../assets/Raleway/Raleway-Thin.ttf") format("truetype");
+}
+/* Style général du thème sombre */
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  padding: 10px 0 10px 20px;
+  background-color: #202225;
+}
+
+.darkTheme {
+  background-color: #202225;
+  color: #5E6167;
+  text-align: left;
+  font-family: "Raleway", sans-serif;
+}
+.darkTheme__lateralBar {
+  padding: 80px 0 0 0;
+  z-index: 1;
+  height: 100%;
+  position: fixed;
+}
+.darkTheme__lateralBar__menuItems {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.darkTheme__lateralBar--salonBar {
+  background-color: #2F3136;
+  width: 240px;
+  padding: 70px 0 0 130px;
+  position: fixed;
+  height: 100%;
+}
+.darkTheme__lateralBar--salonBar h2 {
+  margin: 0;
+  padding: 0;
+}
+.darkTheme__title {
+  margin: 0;
+}
+.darkTheme__flexContainer {
+  display: flex;
+}
+.darkTheme__form {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.darkTheme__form label {
+  color: white;
+  padding: 20px 0;
+}
+.darkTheme__form input {
+  font-family: "Raleway", sans-serif;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  border: none;
+  height: 30px;
+  width: 300px;
+}
+.darkTheme__form input::placeholder {
+  color: white;
+  font-style: italic;
+}
+.darkTheme--mainContainer {
+  margin: 0;
+  background-color: #36393F;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 100px 1fr;
+}
+@media screen and (max-width: 960px) {
+  .darkTheme--mainContainer {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.logo {
+  width: 45px;
+  margin-left: 20px;
+}
+.logo--groupomania {
+  width: 300px;
+  padding: 30px 0;
+}
+
+.action-button {
+  margin: 50px 0;
+  padding: 10px 40px;
+  float: left;
+  border-radius: 10px;
+  font-family: "Pacifico", cursive;
+  font-size: 25px;
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #2F3136;
+  border-bottom: 5px solid #5E6167;
+  text-shadow: 0px -2px #2F3136;
+  transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+}
+.action-button:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+  border-bottom: 1px solid;
+}
+
+.feed__box {
+  padding-top: 70px;
+}
+.feed__title {
+  padding-bottom: 20px;
+}
+.feed__post {
+  list-style: none;
+  padding: 20px;
+  margin: 15px 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid #fff;
+}
+.feed__post__head {
+  font-weight: bold;
+  color: #fff;
+}
+.feed__post__date {
+  font-style: italic;
+  font-weight: 200;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.feed__post__content {
+  padding: 15px 0;
+}
+.feed__comments {
+  margin-top: 10px;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1px 15px 15px 15px;
+  border-radius: 30px;
+}
+.feed__comments p {
+  margin-left: 20px;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 0.9em;
+}
+.feed__comments span {
+  margin-left: 40px;
+  font-size: 0.8em;
+}
+
+.comments-form {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.post-form {
+  margin: auto;
+  width: 80%;
+  font-size: 1em;
+  font-family: inherit;
+}
+.post-form__item {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+}
+.post-form--inline {
+  margin: 5px 0;
+  display: flex;
+  gap: 20px;
+}
+.post-form input {
+  font-size: 1em;
+  margin: 5px 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 5px 15px;
+  border: none;
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: 10px;
+}
+.post-form input::placeholder {
+  color: white;
+}
+.post-form button {
+  padding: 5px 15px;
+  background-color: #36393F;
+  border: solid 1px #fff;
+  box-shadow: none;
+  color: #fff;
+  font-size: 1em;
+  font-family: inherit;
+}
+.post-form button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.form-items label {
+  color: #fff;
+  font-style: italic;
+}
+.form-items input {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.MuiInput-underline:after {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+.MuiInput-underline:before {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+.Mui-focused {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.MuiTextField-root {
+  width: 80% !important;
+}
+
+/*# sourceMappingURL=main.css.map */

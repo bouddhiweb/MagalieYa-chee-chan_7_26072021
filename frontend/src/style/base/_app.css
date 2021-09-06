@@ -1,3 +1,5 @@
+/* Style par défaut de l'application React */
+
 .App {
   text-align: center;
 }
@@ -36,3 +38,6 @@
     transform: rotate(360deg);
   }
 }
+
+/* Fin de style par défaut de l'application React */
+

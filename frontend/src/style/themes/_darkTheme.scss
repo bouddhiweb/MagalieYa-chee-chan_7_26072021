@@ -1,0 +1,233 @@
+@font-face {
+  font-family: "Raleway";
+  src: url("../../assets/Raleway/Raleway-Thin.ttf") format("truetype")
+}
+/* Style général du thème sombre */
+
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  padding: 10px 0 10px 20px;
+  background-color: $colour-bg-darker;
+}
+
+.darkTheme {
+  background-color: $colour-bg-darker;
+  color: $colour-primary;
+  text-align: left;
+  font-family: "Raleway", sans-serif;
+  &__lateralBar {
+    padding: 80px 0 0 0;
+    z-index: 1;
+    height: 100%;
+    position: fixed;
+    &__menuItems {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    &--salonBar {
+      background-color: $colour-bg-light;
+      width: 240px;
+      padding: 70px 0 0 130px;
+      position: fixed;
+      height: 100%;
+      h2 {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  &__title {
+    margin: 0;
+  }
+  &__flexContainer {
+    display: flex;
+  }
+  &__form {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    label {
+      color: white;
+      padding: 20px 0;
+    }
+    input {
+      font-family: "Raleway", sans-serif;
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+      box-shadow: none;
+      border: none;
+      height: 30px;
+      width: 300px;
+    }
+    input::placeholder {
+      color: white;
+      font-style: italic;
+    }
+  }
+  &--mainContainer {
+    margin: 0;
+    background-color: $colour-bg-dark;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 100px 1fr;
+    @media screen and (max-width: map-get($breakpoints, medium)) {
+      grid-template-columns:1fr 2fr;
+    }
+  }
+}
+
+.logo {
+  width: 45px;
+  margin-left: 20px;
+  &--groupomania {
+    width: 300px;
+    padding: 30px 0;
+  }
+}
+
+.action-button {
+  margin: 50px 0;
+  padding: 10px 40px;
+  float: left;
+  border-radius: 10px;
+  font-family: 'Pacifico', cursive;
+  font-size: 25px;
+  color: #ffffff;
+  text-decoration: none;
+  background-color: $colour-bg-light;
+  border-bottom: 5px solid $colour-primary;
+  text-shadow: 0px -2px $colour-bg-light;
+  transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+  &:active {
+    transform: translate(0px,5px);
+    -webkit-transform: translate(0px,5px);
+    border-bottom: 1px solid;
+  }
+}
+
+.feed {
+  &__box {
+padding-top: 70px;
+  }
+  &__title {
+    padding-bottom: 20px;
+  }
+  &__post {
+    list-style: none;
+    padding: 20px;
+    margin: 15px 30px;
+    background-color: $white-trans;
+    border-radius: 8px;
+    border: 1px solid $colour-white;
+    &__head {
+      font-weight: bold;
+      color: $colour-white;
+    }
+    &__date {
+      font-style: italic;
+      font-weight: 200;
+      font-size: 0.9em;
+      color: $white-trans5!important;
+    }
+    &__content {
+      padding: 15px 0;
+    }
+  }
+  &__comments {
+    margin-top: 10px;
+    color: $colour-white;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1px 15px 15px 15px;
+    border-radius: 30px;
+    p {
+      margin-left: 20px;
+      font-style: italic;
+      font-weight: 200;
+      font-size: 0.9em;
+    }
+    span {
+      margin-left: 40px;
+      font-size: 0.8em;
+    }
+  }
+}
+
+.comments-form {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.post-form {
+  margin: auto;
+  width: 80%;
+  font-size: 1em;
+  font-family: inherit;
+  &__item {
+    margin:15px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  &--inline {
+    margin:5px 0;
+    display: flex;
+    gap: 20px;
+  }
+  input{
+    font-size: 1em;
+    margin:5px 0;
+    background-color: $white-trans5;
+    padding: 5px 15px;
+    border: none;
+    font-family: inherit;
+    font-weight: 500;
+    border-radius: 10px;
+    &::placeholder {
+      color: white;
+    }
+  }
+  button {
+    padding: 5px 15px;
+    background-color: $colour-bg-dark;
+    border: solid 1px $colour-white;
+    box-shadow: none;
+    color: $colour-white;
+    font-size: 1em;
+    font-family: inherit;
+    &:hover {
+      background-color: $white-trans;
+      transition: background-color 0.2s ease;
+    }
+  }
+}
+
+.form-items {
+  label {
+    color: $colour-white;
+    font-style: italic;
+  }
+  input {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+  }
+}
+
+.MuiInput-underline:after {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.9)!important;
+}
+
+.MuiInput-underline:before {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9)!important;
+}
+
+.Mui-focused {
+  color: rgba(255, 255, 255, 0.9)!important;
+}
+
+.MuiTextField-root {
+  width: 80%!important;
+}
