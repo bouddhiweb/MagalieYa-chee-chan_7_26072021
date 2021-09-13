@@ -3,17 +3,17 @@ const connection = require("../models/connection");
 const jwt = require("jsonwebtoken");
 
 
-//Création d'un post
+//Création d'un commentaire
 exports.create = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         // console.log(token);
-        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.id_user) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
+        const addPost = "INSERT INTO comments (id_user, body) VALUES (" + connection.escape(req.body.id_user) + ", " + connection.escape(req.body.body) + ")";
         connection.connect((err) => {
             connection.query(addPost, (err, rows) => {
                 let user = utils.getUser(token);
                 console.log(user);
-                res.status(200).json('Gif enregistré !')
+                res.status(200).json('Commentaire enregistré !')
             })
         })
     } catch (e) {
@@ -23,25 +23,24 @@ exports.create = (req, res, next) => {
     }
 }
 
-//Suppression d'un post
+//Suppression d'un commentaire
 exports.delete = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         let user = utils.getUser(token);
-        let posts = "DELETE FROM gifs WHERE id = " + connection.escape(req.body.id);
+        let comments = "DELETE FROM comments WHERE id = " + connection.escape(req.body.id);
         if (!user.isAdmin) {
-            posts+=" AND id_user = " + connection.escape(user.id);
+            comments+=" AND id_user = " + connection.escape(user.id);
         }
         connection.connect((err) => {
-            connection.query(posts, (err, rows) => {
+            connection.query(comments, (err, rows) => {
                 console.log(rows);
-                const post = rows[0];
+                const comment = rows[0];
                 res.status(200).json({
-                    id: post.id,
-                    id_user: post.id_user,
-                    title: post.title,
-                    url: post.url,
-                    created: post.created
+                    id: comment.id,
+                    id_user: comment.id_user,
+                    body: comment.body,
+                    created: comment.created
                 })
             })
         })
@@ -52,10 +51,12 @@ exports.delete = (req, res, next) => {
     }
 }
 
-//Affichage de la liste des gifs (ordre chronologique)
+//Affichage de la liste des commentaire (ordre chronologique) d'un post/gif
+
+// A revoir pour les jointures
 exports.list = (req, res, next) => {
     try {
-        const posts = "SELECT g.id, g.id_user, g.title, g.url, g.created, u.username \n" +
+        const comments = "SELECT g.id, g.id_user, g.title, g.url, g.created, u.username \n" +
             "FROM gifs g\n" +
             "INNER JOIN users u ON g.id_user = u.id\n" +
             "ORDER BY created DESC ";

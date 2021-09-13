@@ -10,7 +10,8 @@ module.exports = {
             let decode = jwt.verify(data, process.env.TOKEN_SECRET);
             return {
                 id : decode.userId,
-                username: decode.username
+                username: decode.username,
+                isAdmin: decode.isAdmin
             }
 
         } catch (e) {

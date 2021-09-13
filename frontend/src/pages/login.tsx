@@ -22,7 +22,7 @@ const Login = () => {
             password: password
         }
         Connect(userData);
-        document.location.reload()
+         document.location.reload()
     }
     return (
         <div className='darkTheme'>

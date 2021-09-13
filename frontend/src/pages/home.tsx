@@ -3,11 +3,11 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import SendIcon from '@material-ui/icons/Send';
 import Post from '../components/Post'
+import Delete from "../constants/deletePost";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 
 export default function HomePage() {
-    const username = sessionStorage.getItem('username');
-    console.log(sessionStorage);
     let [data, setItems]:any = useState({});
     useEffect(() => {
         // const token = sessionStorage.getItem('token');
@@ -22,7 +22,7 @@ export default function HomePage() {
         fetch("http://localhost:3000/content/list", requestOptions)
             .then(response => response.json())
             .then(result  => {
-                //console.log(result)
+                 // console.log(result)
                 setItems(result)
             })
             .catch(error => console.log('error', error));
@@ -31,7 +31,6 @@ export default function HomePage() {
     const postsDate:any = [];
     for(let i = 0; i < data.length; i++) {
         // console.log(i)
-
         let date = new Date(data[i].created);
          const year = date.getFullYear();
          const month = (date.getMonth()+1);
@@ -42,10 +41,24 @@ export default function HomePage() {
          postsDate.push(formatDate);
         postsId.push(i);
     }
+    // @ts-ignore
+    function handleClick(e:any) {
+        e.preventDefault();
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+        const postId = e.currentTarget.id;
+        let datas = {
+            token : token,
+            userId: userId,
+            postId: postId
+        };
+        Delete(datas);
+    }
+
 
     const listItems = postsId.map((postId:any) =>
         <ul className='feed__post'>
-            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span></li>
+            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <button onClick={handleClick} id={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></button></li>
             <hr/>
             <li className='feed__post__content'>
                 <iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />
