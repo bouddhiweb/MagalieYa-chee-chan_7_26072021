@@ -27,8 +27,8 @@ exports.signup = async (req, res, next) => {
                     connection.connect((err) => {
                         connection.query(checkDB,(err,rows) => {
                             const user = rows[0];
-                            console.log(rows);
-                            console.log(user);
+                            // console.log(rows);
+                            // console.log(user);
                             if(user === undefined) {
                                 connection.query(addUser,(err,rows) => {
                                     res.status(201).json({
@@ -54,7 +54,7 @@ exports.signup = async (req, res, next) => {
 // Retrouve un utilisateur existant
 exports.login = (req, res, next) => {
     try {
-        const emailQuery ="SELECT id, username, email, password FROM users WHERE email=" + connection.escape(req.body.email);
+        const emailQuery ="SELECT id, username, email, password, isAdmin FROM users WHERE email=" + connection.escape(req.body.email);
         connection.connect((err) => {
             connection.query(emailQuery,(err,rows) => {
                 const user = rows[0];
@@ -67,13 +67,14 @@ exports.login = (req, res, next) => {
                     const passwordDB = user.password;
                     const pwdCheck = bcrypt.compareSync(passwordForm, passwordDB);
                     if (pwdCheck) {
-                         console.log(user);
+                         // console.log(user);
                         res.status(200).json({
                             userId: user.id,
                             token: jwt.sign(
                                 {
                                     userId: user.id,
-                                    username: user.username
+                                    username: user.username,
+                                    isAdmin: user.isAdmin
                                 },
                                 process.env.TOKEN_SECRET,
                                 {

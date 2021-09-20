@@ -6,6 +6,7 @@ const app = express();
 
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
+const commentRoutes = require('./routes/comment');
 
 //CORS - Blocks HTTP calls between different servers
 app.use((req, res, next) => {
@@ -19,5 +20,6 @@ app.use(cors());
 
 app.use('/auth', userRoutes);
 app.use('/content', postRoutes);
+app.use('/comment', commentRoutes);
 
 module.exports = app;

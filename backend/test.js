@@ -13,7 +13,7 @@ connexion.query('SELECT * from users', (error, result, fields) => {
     if(error) {
         throw error
     }
-    console.log(result);
+    // console.log(result);
 });
 
 connexion.end();

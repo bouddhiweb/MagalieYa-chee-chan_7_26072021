@@ -1,18 +1,15 @@
 let utils = require('../utils/jwtUtils');
 const connection = require("../models/connection");
-const jwt = require("jsonwebtoken");
-
 
 //Création d'un post
 exports.create = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        // console.log(token);
-        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.id_user) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
+        const token = req.headers.authorization;
+        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
         connection.connect((err) => {
             connection.query(addPost, (err, rows) => {
                 let user = utils.getUser(token);
-                console.log(user);
+                // console.log(user);
                 res.status(200).json('Gif enregistré !')
             })
         })
@@ -26,23 +23,24 @@ exports.create = (req, res, next) => {
 //Suppression d'un post
 exports.delete = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization;
         let user = utils.getUser(token);
-        let posts = "DELETE FROM gifs WHERE id = " + connection.escape(req.body.id);
+        if (user === undefined) {
+            throw 'Token expiré ou inconnu'
+        }
+        let posts = "DELETE FROM gifs WHERE id = " + connection.escape(req.body.postId);
         if (!user.isAdmin) {
             posts+=" AND id_user = " + connection.escape(user.id);
         }
+        // console.log(posts);
         connection.connect((err) => {
-            connection.query(posts, (err, rows) => {
-                console.log(rows);
-                const post = rows[0];
-                res.status(200).json({
-                    id: post.id,
-                    id_user: post.id_user,
-                    title: post.title,
-                    url: post.url,
-                    created: post.created
-                })
+            connection.query(posts, (err, result) => {
+                // console.log(result);
+                if(result.affectedRows > 0) {
+                    res.status(200).json({information : 'Gif supprimé'})
+                } else {
+                    res.status(400).json({error: 'Une erreur est survenue au moment de la suppression.'})
+                }
             })
         })
     } catch (e) {

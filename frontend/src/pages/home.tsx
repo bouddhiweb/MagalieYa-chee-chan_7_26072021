@@ -1,48 +1,92 @@
 import {useEffect, useState} from 'react';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
-import SendIcon from '@material-ui/icons/Send';
 import Post from '../components/Post'
 import Delete from "../constants/deletePost";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import SendIcon from "@material-ui/icons/Send";
+import {add} from "../constants/commentsManager";
 
 export default function HomePage() {
     let [data, setItems]:any = useState({});
+    let [commentDatas, setComments]:any = useState({});
+    const [body, setBody] = useState("");
+
     useEffect(() => {
-        // const token = sessionStorage.getItem('token');
         const myHeaders = new Headers();
         const requestOptions:any = {
             headers: myHeaders,
             method: 'GET',
             redirect: 'follow'
         };
-        // myHeaders.append("Authorization", 'Bearer ' + token);
 
         fetch("http://localhost:3000/content/list", requestOptions)
             .then(response => response.json())
             .then(result  => {
-                 // console.log(result)
                 setItems(result)
             })
             .catch(error => console.log('error', error));
     },[])
+
     const postsId:any = [];
     const postsDate:any = [];
-    for(let i = 0; i < data.length; i++) {
-        // console.log(i)
-        let date = new Date(data[i].created);
-         const year = date.getFullYear();
-         const month = (date.getMonth()+1);
-         const day = date.getDate();
-         const hour = date.getHours();
-         const minute = (date.getMinutes()<10?'0':'') + date.getMinutes() ;
-         const formatDate = day + '/' + month + '/' + year + ' à ' + hour + ':' + minute;
-         postsDate.push(formatDate);
-        postsId.push(i);
+    const commentsId:any = [];
+    const commentsDate:any = [];
+
+    const display = (datas:any) => {
+        const token:any = sessionStorage.getItem('token');
+        const postId = datas.postId;
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", token);
+        myHeaders.append("Accept", 'application/json');
+        myHeaders.append("Content-Type", 'application/json');
+        const raw = {
+            token: token,
+            postId: postId
+        };
+        const requestOptions = {
+            headers: myHeaders,
+            method: 'POST',
+            redirect: 'follow',
+            body: JSON.stringify(raw),
+        };
+
+        // @ts-ignore
+        fetch("http://localhost:3000/comment/list", requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log(result);
+                const res = JSON.parse(result);
+                setComments(res)
+            })
     }
-    // @ts-ignore
-    function handleClick(e:any) {
+
+    for(let i = 0; i < data.length; i++) {
+        let date = new Date(data[i].created);
+        const year = date.getFullYear();
+        const month = (date.getMonth()+1);
+        const day = date.getDate();
+        const hour = date.getHours();
+        const minute = (date.getMinutes()<10?'0':'') + date.getMinutes() ;
+        const formatDate = day + '/' + month + '/' + year + ' à ' + hour + ':' + minute;
+        postsDate.push(formatDate);
+        postsId.push(i);
+        data[i].comments = commentDatas;
+    }
+
+    for(let i = 0; i < commentDatas.length; i++) {
+        let cDate = new Date(commentDatas[i].created);
+        const cYear = cDate.getFullYear();
+        const cMonth = (cDate.getMonth()+1);
+        const cDay = cDate.getDate();
+        const cHour = cDate.getHours();
+        const cMinute = (cDate.getMinutes()<10?'0':'') + cDate.getMinutes() ;
+        const formatDate = cDay + '/' + cMonth + '/' + cYear + ' à ' + cHour + ':' + cMinute;
+        commentsDate.push(formatDate);
+        commentsId.push(i);
+    }
+
+    const deletePost = (e:any) => {
         e.preventDefault();
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
@@ -55,29 +99,49 @@ export default function HomePage() {
         Delete(datas);
     }
 
+    const addComments = (e:any) => {
+        e.preventDefault();
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+        const postId = e.currentTarget.title;
+        let datas = {
+            token : token,
+            userId: userId,
+            postId: postId,
+            body: body
+        };
+        add(datas);
+    }
 
-    const listItems = postsId.map((postId:any) =>
-        <ul className='feed__post'>
-            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <button onClick={handleClick} id={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></button></li>
+    const displayComments = (e:any) => {
+        e.preventDefault();
+        const token = sessionStorage.getItem('token');
+        const postId = e.currentTarget.title;
+        let datas = {
+            token : token,
+            postId: postId,
+        };
+        display(datas);
+    }
+
+console.log(commentDatas)
+    const listItems = postsId.map((postId:string) =>
+        <ul className='feed__post' id={data[postId].id}>
+            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <span onClick={deletePost} id={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></span></li>
             <hr/>
             <li className='feed__post__content'>
                 <iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />
             </li>
-            <div>
+            <div id={data[postId].id}>
                 <form className='comments-form' noValidate autoComplete="off">
-                    <TextField className='form-items' id="standard-basic" label="Ecrivez un commentaire..." />
+                    <TextField  value={body} className='form-items' id={data[postId].id} label="Ecrivez un commentaire..." onChange={(e) => {setBody(e.target.value)}} />
                     <IconButton className="Mui-focused" aria-label="add a comment">
-                        <SendIcon/>
+                        <span title={data[postId].id} onClick={addComments}><SendIcon/></span>
                     </IconButton>
                 </form>
-                <div className='feed__comments'>
-                    <p><i>Commentaires affichés ici</i></p>
-                    <span>de Bob, le 00/00/00 à 00:00</span>
-                </div>
-                <div className='feed__comments'>
-                    <p><i>Commentaires affichés ici</i></p>
-                    <span>de Bob, le 00/00/00 à 00:00</span>
-                </div>
+                <span className='white-text' onClick={displayComments}>Afficher les commentaires</span>
+                {commentsId.map((commentId: string) => <div className='white-text'> {commentDatas[commentId].id_post === data[postId].id ? <li className='white-text comments-form'>{commentDatas[commentId].id_user} : {commentDatas[commentId].body}</li> : ''}</div>)}
+
             </div>
         </ul>
     );

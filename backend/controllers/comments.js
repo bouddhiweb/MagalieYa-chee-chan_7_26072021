@@ -1,18 +1,13 @@
 let utils = require('../utils/jwtUtils');
 const connection = require("../models/connection");
-const jwt = require("jsonwebtoken");
-
 
 //Création d'un commentaire
 exports.create = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        // console.log(token);
-        const addPost = "INSERT INTO comments (id_user, body) VALUES (" + connection.escape(req.body.id_user) + ", " + connection.escape(req.body.body) + ")";
+        const token = req.headers.authorization;
+        const addComment = "INSERT INTO comments (id_user, id_post, body) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.postId) + ", " + connection.escape(req.body.body) + ")";
         connection.connect((err) => {
-            connection.query(addPost, (err, rows) => {
-                let user = utils.getUser(token);
-                console.log(user);
+            connection.query(addComment, (err, rows) => {
                 res.status(200).json('Commentaire enregistré !')
             })
         })
@@ -26,22 +21,22 @@ exports.create = (req, res, next) => {
 //Suppression d'un commentaire
 exports.delete = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization;
         let user = utils.getUser(token);
+        if (user === undefined) {
+            throw 'Token expiré ou inconnu'
+        }
         let comments = "DELETE FROM comments WHERE id = " + connection.escape(req.body.id);
         if (!user.isAdmin) {
             comments+=" AND id_user = " + connection.escape(user.id);
         }
         connection.connect((err) => {
-            connection.query(comments, (err, rows) => {
-                console.log(rows);
-                const comment = rows[0];
-                res.status(200).json({
-                    id: comment.id,
-                    id_user: comment.id_user,
-                    body: comment.body,
-                    created: comment.created
-                })
+            connection.query(comments, (err, result) => {
+                if(result.affectedRows > 0) {
+                    res.status(200).json({information : 'Commentaire supprimé'})
+                } else {
+                    res.status(400).json({error: 'Une erreur est survenue au moment de la suppression.'})
+                }
             })
         })
     } catch (e) {
@@ -52,21 +47,25 @@ exports.delete = (req, res, next) => {
 }
 
 //Affichage de la liste des commentaire (ordre chronologique) d'un post/gif
-
-// A revoir pour les jointures
 exports.list = (req, res, next) => {
     try {
-        const comments = "SELECT g.id, g.id_user, g.title, g.url, g.created, u.username \n" +
-            "FROM gifs g\n" +
-            "INNER JOIN users u ON g.id_user = u.id\n" +
-            "ORDER BY created DESC ";
+        const token = req.headers.authorization;
+        let user = utils.getUser(token);
+        if (user === undefined) {
+            throw 'Token expiré ou inconnu'
+        }
+        const comments = "SELECT c.id, c.id_user, c.id_post, c.body, c.created, u.username \n" +
+            "FROM comments c\n" +
+            "INNER JOIN users u ON c.id_user = u.id\n" +
+            "WHERE c.id_post =" + connection.escape(req.body.postId) +
+            " ORDER BY created DESC ";
         connection.connect((err) => {
-            connection.query(posts, (err, rows) => {
-                let posts = [];
+            connection.query(comments, (err, rows) => {
+                let comments = [];
                 for (let i = 0; i < rows.length; i++) {
-                    posts.push(rows[i])
+                    comments.push(rows[i])
                 }
-                res.status(200).json(posts)
+                res.status(200).json(comments)
             })
         })
     } catch (e) {
