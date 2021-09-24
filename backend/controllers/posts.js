@@ -4,13 +4,18 @@ const connection = require("../models/connection");
 //Création d'un post
 exports.create = (req, res, next) => {
     try {
+        //TODO:Si fichier => l'enregistrer avec multer + créer l'url /image/[nom fichier]
         const token = req.headers.authorization;
         const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
         connection.connect((err) => {
             connection.query(addPost, (err, rows) => {
                 let user = utils.getUser(token);
-                // console.log(user);
-                res.status(200).json('Gif enregistré !')
+                res.status(200).json({
+                //     gif:{
+                //         title:
+                //         postId:
+                // url:
+                    })
             })
         })
     } catch (e) {
@@ -53,7 +58,7 @@ exports.delete = (req, res, next) => {
 //Affichage de la liste des gifs (ordre chronologique)
 exports.list = (req, res, next) => {
     try {
-        const posts = "SELECT g.id, g.id_user, g.title, g.url, g.created, u.username \n" +
+        const posts = "SELECT g.id, g.id_user, g.title, g.url, g.created, u.username\n" +
             "FROM gifs g\n" +
             "INNER JOIN users u ON g.id_user = u.id\n" +
             "ORDER BY created DESC ";
@@ -63,6 +68,7 @@ exports.list = (req, res, next) => {
                 for (let i = 0; i < rows.length; i++) {
                     posts.push(rows[i])
                 }
+                // console.log(posts)
                 res.status(200).json(posts)
             })
         })

@@ -1,16 +1,20 @@
 import {useEffect, useState} from 'react';
+import '../style/main.scss';
+import {deleteOneComment} from "../constants/commentsManager";
+import {add} from "../constants/commentsManager";
+import {deleteOnePost} from "../constants/postsManager";
 import Post from '../components/Post'
-import Delete from "../constants/deletePost";
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import TextField from "@material-ui/core/TextField";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import IconButton from "@material-ui/core/IconButton";
 import SendIcon from "@material-ui/icons/Send";
-import {add} from "../constants/commentsManager";
+
 
 export default function HomePage() {
     let [data, setItems]:any = useState({});
     let [commentDatas, setComments]:any = useState({});
-    const [body, setBody] = useState("");
+    let [body, setBody] = useState("");
+    let [pId, setpId] = useState("");
 
     useEffect(() => {
         const myHeaders = new Headers();
@@ -44,18 +48,16 @@ export default function HomePage() {
             token: token,
             postId: postId
         };
-        const requestOptions = {
+        const requestOptions:any = {
             headers: myHeaders,
             method: 'POST',
             redirect: 'follow',
             body: JSON.stringify(raw),
         };
-
-        // @ts-ignore
+        setInterval
         fetch("http://localhost:3000/comment/list", requestOptions)
             .then(response => response.text())
             .then(result => {
-                console.log(result);
                 const res = JSON.parse(result);
                 setComments(res)
             })
@@ -96,21 +98,40 @@ export default function HomePage() {
             userId: userId,
             postId: postId
         };
-        Delete(datas);
+        deleteOnePost(datas);
     }
 
-    const addComments = (e:any) => {
+    const handleChange = (e:any) => {
+        setpId(e.target.name);
+        if(pId === e.target.name) {
+            setBody(e.target.value);
+        }
+    }
+
+    const handleSubmit = (e:any) => {
         e.preventDefault();
+
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
-        const postId = e.currentTarget.title;
         let datas = {
             token : token,
             userId: userId,
-            postId: postId,
+            postId: pId,
             body: body
         };
         add(datas);
+    }
+
+    const deleteComment = (e:any) => {
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+        const commentId = e.target.id;
+        let datas = {
+            token : token,
+            userId: userId,
+            commentId: commentId,
+        };
+        deleteOneComment(datas);
     }
 
     const displayComments = (e:any) => {
@@ -124,28 +145,30 @@ export default function HomePage() {
         display(datas);
     }
 
-console.log(commentDatas)
+// console.log(commentDatas)
     const listItems = postsId.map((postId:string) =>
+        /* Itération des posts */
         <ul className='feed__post' id={data[postId].id}>
-            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <span onClick={deletePost} id={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></span></li>
+            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <span onClick={deletePost} key={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></span></li>
             <hr/>
             <li className='feed__post__content'>
                 <iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />
             </li>
-            <div id={data[postId].id}>
-                <form className='comments-form' noValidate autoComplete="off">
-                    <TextField  value={body} className='form-items' id={data[postId].id} label="Ecrivez un commentaire..." onChange={(e) => {setBody(e.target.value)}} />
-                    <IconButton className="Mui-focused" aria-label="add a comment">
-                        <span title={data[postId].id} onClick={addComments}><SendIcon/></span>
+            <div>
+                <span className='white-text' title={data[postId].id} onClick={displayComments}>Commentaires</span>
+                {/*Affichage des commentaires qui dépendent du post */}
+                {commentsId.map((commentId: string) => <div className='white-text'> {commentDatas[commentId].id_post === data[postId].id ? <li className='white-text comments-form'><b>{commentDatas[commentId].username} :</b> {commentDatas[commentId].body}
+                    <p className='deleteComment' id={commentDatas[commentId].id} onClick={deleteComment}>Supprimer ce commentaire</p></li> : ''}</div>)}
+                {/* Formulaire pour ajouter un commentaire  */}
+                <form className='comments-form' onSubmit={handleSubmit}>
+                    <TextField name={data[postId].id} className='form-items' placeholder="Ecrivez un commentaire..." onInput={handleChange} />
+                    <IconButton type="submit" className="Mui-focused" aria-label="add a comment">
+                        <SendIcon data-post-id={data[postId].id} key={data[postId].id} />
                     </IconButton>
                 </form>
-                <span className='white-text' onClick={displayComments}>Afficher les commentaires</span>
-                {commentsId.map((commentId: string) => <div className='white-text'> {commentDatas[commentId].id_post === data[postId].id ? <li className='white-text comments-form'>{commentDatas[commentId].id_user} : {commentDatas[commentId].body}</li> : ''}</div>)}
-
             </div>
         </ul>
     );
-
     return (
         <div className='feed__box'>
             <h2>Bonjour, </h2>
@@ -153,5 +176,5 @@ console.log(commentDatas)
             <h2 className='feed__title'>Fil d'actualité</h2>
             <div>{listItems}</div>
         </div>
-    )
+    );
 }

@@ -3,6 +3,7 @@ const connection = require("../models/connection");
 
 //Création d'un commentaire
 exports.create = (req, res, next) => {
+    console.log(req)
     try {
         const token = req.headers.authorization;
         const addComment = "INSERT INTO comments (id_user, id_post, body) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.postId) + ", " + connection.escape(req.body.body) + ")";
@@ -20,15 +21,16 @@ exports.create = (req, res, next) => {
 
 //Suppression d'un commentaire
 exports.delete = (req, res, next) => {
+    console.log(req)
     try {
         const token = req.headers.authorization;
         let user = utils.getUser(token);
         if (user === undefined) {
             throw 'Token expiré ou inconnu'
         }
-        let comments = "DELETE FROM comments WHERE id = " + connection.escape(req.body.id);
+        let comments = "DELETE FROM comments WHERE id = " + connection.escape(req.body.commentId);
         if (!user.isAdmin) {
-            comments+=" AND id_user = " + connection.escape(user.id);
+            comments+=" AND id_user = " + connection.escape(req.body.userId);
         }
         connection.connect((err) => {
             connection.query(comments, (err, result) => {
@@ -61,9 +63,11 @@ exports.list = (req, res, next) => {
             " ORDER BY created DESC ";
         connection.connect((err) => {
             connection.query(comments, (err, rows) => {
+
                 let comments = [];
                 for (let i = 0; i < rows.length; i++) {
                     comments.push(rows[i])
+                    // console.log(comments)
                 }
                 res.status(200).json(comments)
             })

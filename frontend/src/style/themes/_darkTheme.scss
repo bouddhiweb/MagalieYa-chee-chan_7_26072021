@@ -4,6 +4,9 @@
 }
 /* Style général du thème sombre */
 
+#fileInput{
+  display: block;
+}
 .header {
   position: fixed;
   width: 100%;
@@ -225,7 +228,15 @@ padding-top: 70px;
 .white-text {
   color: white;
 }
-
+.deleteComment {
+  font-style: italic;
+  font-size: 12px;
+  cursor: pointer;
+  &:hover {
+    font-weight: bolder;
+    text-decoration: underline;
+  }
+}
 .MuiInput-underline:after {
   border-bottom: 2px solid rgba(255, 255, 255, 0.9)!important;
 }
