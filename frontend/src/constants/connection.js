@@ -25,10 +25,12 @@ export default function Connection(datas) {
             const res = JSON.parse(result);
             const token= res.token;
             const userId = res.userId;
+            const username = res.username;
+            const role = res.role;
             sessionStorage.setItem('token', token);
             sessionStorage.setItem('userId', userId);
-            // sessionStorage.setItem('username', username);
-            // sessionStorage.setItem('id_user', id_user);
+            sessionStorage.setItem('username', username);
+            sessionStorage.setItem('role', role);
             myHeaders.append("Token", token);
         })
         .catch(error => console.log('error', error));

@@ -5,7 +5,6 @@ const connection = require("../models/connection");
 exports.create = (req, res, next) => {
     try {
         //TODO:Si fichier => l'enregistrer avec multer + créer l'url /image/[nom fichier]
-        const token = req.headers.authorization;
         const urlPattern = /(https:\/\/giphy\.com\/embed\/)(.*)/;
         const urlSubmitted = req.body.url;
         const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
@@ -16,7 +15,7 @@ exports.create = (req, res, next) => {
                     let JSONgif = {
                         title:req.body.title,
                         postId:rows.insertId,
-                        url: req.body.url,
+                        url: urlSubmitted,
                     }
                     res.status(200).json(JSONgif)
                 })
@@ -72,12 +71,11 @@ exports.list = (req, res, next) => {
             "INNER JOIN users u ON g.id_user = u.id\n" +
             "ORDER BY created DESC ";
         connection.connect((err) => {
-            connection.query(posts, (err, rows) => {
+                connection.query(posts, (err, rows) => {
                 let posts = [];
                 for (let i = 0; i < rows.length; i++) {
                     posts.push(rows[i])
                 }
-                // console.log(posts)
                 res.status(200).json(posts)
             })
         })

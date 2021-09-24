@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const connection = require("../models/connection");
 const app = express();
 const bodyParser = require("body-parser");
+const utils = require("../utils/jwtUtils");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -67,8 +68,10 @@ exports.login = (req, res, next) => {
                     const passwordDB = user.password;
                     const pwdCheck = bcrypt.compareSync(passwordForm, passwordDB);
                     if (pwdCheck) {
-                         // console.log(user);
+                        // console.log(user);
                         res.status(200).json({
+                            role: user.isAdmin,
+                            username:user.username,
                             userId: user.id,
                             token: jwt.sign(
                                 {
@@ -91,6 +94,75 @@ exports.login = (req, res, next) => {
                 }
             })
         });
+    } catch (e)  {
+        res.status(500).json({
+            error: e
+        })
+    }
+};
+
+//Liste des utilisateurs
+exports.userlist = (req, res, next) => {
+    try {
+        const userlist ="SELECT id, username, email, isAdmin FROM users";
+        connection.connect((err) => {
+            connection.query(userlist,(err,rows) => {
+                const users = [];
+                for (let i = 0; i < rows.length; i++) {
+                    users.push(rows[i])
+                }
+                res.status(200).json(users)
+            })
+        });
+    } catch (e)  {
+        res.status(500).json({
+            error: e
+        })
+    }
+};
+
+//Changement de mot de passe
+exports.update = (req, res, next) => {
+    // console.log(req.body)
+    try {
+        // console.log(req.headers.authorization)
+        const token = req.headers.authorization;
+        let user = utils.getUser(token);
+        if (user === undefined) {
+            throw 'Token expiré ou inconnu'
+        }
+        if (!user.isAdmin) {
+            res.status(400).json({
+                error: "Vous n'avez pas les droits nécessaire pour effectuer cette action"
+            })
+        }
+        if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.{6,})/.test(req.body.newPassword)) {   // Test password strength
+            return res.status(401).json({ error: 'Le mot de passe doit contenir une lettre majuscule, une minuscule et au moins 1 chiffre (6 caractères min)' });
+        } else {
+            bcrypt.hash(req.body.newPassword, 10)
+                .then(hash => {
+                    const userForm = {
+                        userId: req.body.userId,
+                        newPassword: hash
+                    }
+                    // console.log(userForm)
+                    const updatePwd ="UPDATE users SET password=" + "'" + hash + "'" +" WHERE id=" + connection.escape(userForm.userId);
+                    // console.log(updatePwd)
+                    connection.connect((err) => {
+                        connection.query(updatePwd,(err,result) => {
+                            // console.log(result)
+                            if(result.affectedRows > 0) {
+                                res.status(200).json({information : 'Mot de passe modifié'})
+                            } else {
+                                res.status(400).json({error: 'Une erreur est survenue au moment du changement du mot de passe.'})
+                            }
+                        })
+                    });
+
+                })
+
+
+        }
     } catch (e)  {
         res.status(500).json({
             error: e

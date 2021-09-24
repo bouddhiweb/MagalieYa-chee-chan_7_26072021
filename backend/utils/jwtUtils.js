@@ -8,7 +8,7 @@ module.exports = {
     getUser: (data) => {
         try {
             let decode = jwt.verify(data, process.env.TOKEN_SECRET);
-            // console.log(decode)
+             // console.log(decode)
             return {
                 id : decode.userId,
                 username: decode.username,

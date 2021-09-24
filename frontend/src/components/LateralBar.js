@@ -21,7 +21,8 @@ const LateralBar = () => {
             {
                 name: 'Déconnexion',
                 icon: <FaSignOutAlt/>,
-                onClick: handleClick
+                onClick: handleClick,
+                path: ROUTES.login
             },
         ]
 

@@ -118,6 +118,7 @@ export default function HomePage() {
             body: body
         };
         add(datas);
+        e.target.reset();
     }
 
     const deleteComment = (e:any) => {

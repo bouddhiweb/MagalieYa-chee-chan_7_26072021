@@ -27,13 +27,11 @@ export const deleteOnePost = (datas) => {
 }
 
 export const AddPost = (datas) => {
-    console.log(datas)
+    // console.log(datas)
     const userId = datas.userId;
     const token = datas.token;
     const title = datas.title;
     const url = datas.url;
-
-
     const myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     myHeaders.append("Accept", 'application/json');
@@ -45,7 +43,7 @@ export const AddPost = (datas) => {
         title: title,
         url: url,
     };
-    console.log(myHeaders);
+    // console.log(myHeaders);
     const requestOptions = {
         method: 'POST',
         headers: myHeaders,
