@@ -54,7 +54,6 @@ export default function HomePage() {
             redirect: 'follow',
             body: JSON.stringify(raw),
         };
-        setInterval
         fetch("http://localhost:3000/comment/list", requestOptions)
             .then(response => response.text())
             .then(result => {
@@ -92,7 +91,7 @@ export default function HomePage() {
         e.preventDefault();
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
-        const postId = e.currentTarget.id;
+        const postId = e.currentTarget.title;
         let datas = {
             token : token,
             userId: userId,
@@ -110,7 +109,6 @@ export default function HomePage() {
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
-
         const token = sessionStorage.getItem('token');
         const userId = sessionStorage.getItem('userId');
         let datas = {
@@ -149,7 +147,11 @@ export default function HomePage() {
     const listItems = postsId.map((postId:string) =>
         /* Itération des posts */
         <ul className='feed__post' id={data[postId].id}>
-            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span> <span onClick={deletePost} key={data[postId].id} className='feed__post__icon'><DeleteOutlineIcon/></span></li>
+            <li className='feed__post__head'>{data[postId].title} <span className='feed__post__date'>de <b>{data[postId].username}</b> posté le <b>{postsDate[postId]}</b></span>
+                <IconButton onClick={deletePost} title={data[postId].id} data-postId={data[postId].id} className="Mui-focused">
+                    <DeleteOutlineIcon/>
+                </IconButton>
+            </li>
             <hr/>
             <li className='feed__post__content'>
                 <iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />

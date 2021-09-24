@@ -20,14 +20,13 @@ const Post = () => {
         console.log(datas)
          AddPost(datas);
     }
-
     return (
         <div>
             <form className="post-form">
                 <div className="post-form__item">
                     <input type="text" placeholder='Quoi de neuf ?' className="form-control" id="description" onChange={e => setTitle(e.target.value)}/>
                     <div className="post-form--inline">
-                        <input type="url" name="url" id="url" placeholder="https://giphy.com/" pattern="https://giphy.com/embed/*" size="80" onChange={e => setUrl(e.target.value)}/>
+                        <input type="url" name="url" id="url" placeholder="https://giphy.com/embed/" pattern="https://giphy.com/embed/*" size="80" onChange={e => setUrl(e.target.value)}/>
                         {url ? <div/> : <div id="fileInput"> <input name="url" type="file" accept="image/*"/></div>}
                     </div>
                 </div>

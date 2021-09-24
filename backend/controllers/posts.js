@@ -6,18 +6,27 @@ exports.create = (req, res, next) => {
     try {
         //TODO:Si fichier => l'enregistrer avec multer + créer l'url /image/[nom fichier]
         const token = req.headers.authorization;
+        const urlPattern = /(https:\/\/giphy\.com\/embed\/)(.*)/;
+        const urlSubmitted = req.body.url;
         const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
-        connection.connect((err) => {
-            connection.query(addPost, (err, rows) => {
-                let user = utils.getUser(token);
-                res.status(200).json({
-                //     gif:{
-                //         title:
-                //         postId:
-                // url:
-                    })
+
+        if (urlSubmitted.match(urlPattern)) {
+            connection.connect((err) => {
+                connection.query(addPost, (err, rows) => {
+                    let JSONgif = {
+                        title:req.body.title,
+                        postId:rows.insertId,
+                        url: req.body.url,
+                    }
+                    res.status(200).json(JSONgif)
+                })
             })
-        })
+        } else {
+            res.status(400).json({
+                error: "L'URL doit commencer par https://giphy.com/embed"
+            })
+        }
+
     } catch (e) {
         res.status(500).json({
             error: e
