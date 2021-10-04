@@ -1,33 +1,30 @@
+import axios from "axios";
+
 export default function Connection(datas) {
+    const LOGIN_URL = 'http://localhost:3000/auth/login';
     const email = datas.email;
     const password = datas.password;
     const myHeaders = new Headers();
-
-    const raw = {
+    const data = {
         email: email,
         password: password
     };
 
-    const requestOptions = {
-        headers: {
-            myHeaders,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(raw),
-        redirect: 'follow',
-    };
-
-    fetch("http://localhost:3000/auth/login", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-            const res = JSON.parse(result);
-            const token= res.token;
-            const username = res.username;
-             console.log(result);
-            sessionStorage.setItem('token', token, 'username', username);
-            myHeaders.append("Token", token, 'username', username);
+    axios
+        .post(LOGIN_URL, data)
+        .then((res) => {
+            const token = res.data.token;
+            const userId = res.data.userId;
+            const username = res.data.username;
+            const role = res.data.role;
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('userId', userId);
+            sessionStorage.setItem('username', username);
+            sessionStorage.setItem('role', role);
+            myHeaders.append("Token", token);
+            document.location.reload()
         })
-        .catch(error => console.log('error', error));
+        .catch((err) => {
+            alert("erreur : un problème est survenu au moment de la connexion" + err)
+        });
 }

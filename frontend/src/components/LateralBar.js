@@ -5,7 +5,7 @@ import {ROUTES} from "../constants/routes";
 const LateralBar = () => {
     const handleClick = () => {
         sessionStorage.clear();
-        document.location.reload();
+        setTimeout(() => document.location.reload(), 5000);
     }
         const menuItems = [
             {
@@ -21,7 +21,8 @@ const LateralBar = () => {
             {
                 name: 'Déconnexion',
                 icon: <FaSignOutAlt/>,
-                onClick: handleClick
+                onClick: handleClick,
+                path: ROUTES.index
             },
         ]
 

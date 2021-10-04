@@ -5,7 +5,7 @@ import LateralBar from "./LateralBar";
 import '../style/main.scss'
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {ROUTES} from "../constants/routes";
-import {HomePage, LoginPage, ProfilPage, RegisterPage} from "../pages";
+import {HomePage, LoginPage, ProfilPage} from "../pages";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -36,7 +36,6 @@ const useStyles = makeStyles(() => ({
 
 const Layout = () => {
     const classes = useStyles();
-
     return (
         <>
             <div className='header'><Banner /></div>
@@ -49,7 +48,6 @@ const Layout = () => {
                             <Route exact title="Vibes" path={ROUTES.index} component={HomePage} />
                             <Route exact title="Se connecter - Vibes" path={ROUTES.login} component={LoginPage} />
                             <Route exact title="Mon profil - Vibes" path={ROUTES.profil} component={ProfilPage} />
-                            <Route exact title="Créer un compte - Vibes" path={ROUTES.signup} component={RegisterPage} />
                         </Switch>
                     </BrowserRouter>
                 </main>
