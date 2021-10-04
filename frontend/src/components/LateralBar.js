@@ -5,7 +5,7 @@ import {ROUTES} from "../constants/routes";
 const LateralBar = () => {
     const handleClick = () => {
         sessionStorage.clear();
-        document.location.reload();
+        setTimeout(() => document.location.reload(), 5000);
     }
         const menuItems = [
             {

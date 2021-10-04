@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
+import axios from 'axios';
 import '../style/main.scss';
-import {deleteOneComment} from "../constants/commentsManager";
-import {add} from "../constants/commentsManager";
+import {addComment, deleteOneComment} from "../constants/commentsManager";
 import {deleteOnePost} from "../constants/postsManager";
 import Post from '../components/Post'
 import TextField from "@material-ui/core/TextField";
@@ -11,67 +11,53 @@ import SendIcon from "@material-ui/icons/Send";
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 export default function HomePage() {
-    let [token, setToken]:any = useState(sessionStorage.getItem('token'));
-    let [userId, setUserId]:any = useState(sessionStorage.getItem('userId'));
-    let [username, setUsername]:any = useState(sessionStorage.getItem('username'));
+    const token = sessionStorage.getItem('token');
+    const userId= sessionStorage.getItem('userId');
+    const username = sessionStorage.getItem('username');
     let [data, setItems]:any = useState({});
     let [commentDatas, setComments]:any = useState({});
     let [body, setBody] = useState("");
     let [pId, setpId] = useState("");
-    const [isLoaded, setIsLoaded] = useState(false)
-
-    useEffect(() => {
-        const myHeaders = new Headers();
-        const requestOptions:any = {
-            headers: myHeaders,
-            method: 'GET',
-            redirect: 'follow'
-        };
-         setInterval(() => {
-
-        fetch("http://localhost:3000/content/list", requestOptions)
-            .then(response => response.json())
-            .then(result  => {
-                setIsLoaded(true);
-                setItems(result)
-            })
-            .catch(error => {
-                setIsLoaded(true);
-                console.log('error', error)
-            });
-         }, 250)
-    },[])
-
 
     const postsId:any = [];
     const postsDate:any = [];
     const commentsId:any = [];
     const commentsDate:any = [];
 
-    const display = (datas:any) => {
-        const postId = datas.postId;
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", token);
-        myHeaders.append("Accept", 'application/json');
-        myHeaders.append("Content-Type", 'application/json');
-        const raw = {
-            token: token,
-            postId: postId
-        };
-        const requestOptions:any = {
-            headers: myHeaders,
-            method: 'POST',
-            redirect: 'follow',
-            body: JSON.stringify(raw),
-        };
+    const POSTLIST_URL = 'http://localhost:3000/content/list';
+    const COMMENTLIST_URL = 'http://localhost:3000/comment/list';
+
+    useEffect(() => {
          setInterval(() => {
-                fetch("http://localhost:3000/comment/list", requestOptions)
-                    .then(response => response.text())
-                    .then(result => {
-                        const res = JSON.parse(result);
-                        setComments(res)
-                    })
+            axios
+                .get(POSTLIST_URL)
+                .then(res => {
+                    setItems(res.data)
+                })
+                .catch(error => {
+                    console.log('error', error)
+                });
          }, 250)
+    },[])
+
+    const displayComments = (e:any) => {
+        e.preventDefault();
+        const postId = e.currentTarget.title;
+        let datas = {
+            token : token,
+            postId: postId,
+        };
+        setInterval(() => {
+        axios
+            .post(COMMENTLIST_URL, datas)
+            .then((res) => {
+                setComments(res.data)
+            })
+            .catch((err) => {
+
+                alert("erreur : " + err)
+            });
+        }, 250)
     }
 
     for(let i = 0; i < data.length; i++) {
@@ -125,7 +111,7 @@ export default function HomePage() {
             postId: pId,
             body: body
         };
-        add(datas);
+        addComment(datas);
         e.target.reset();
     }
 
@@ -139,15 +125,6 @@ export default function HomePage() {
         deleteOneComment(datas);
     }
 
-    const displayComments = (e:any) => {
-        e.preventDefault();
-        const postId = e.currentTarget.title;
-        let datas = {
-            token : token,
-            postId: postId,
-        };
-        display(datas);
-    }
 
 // console.log(commentDatas)
     const listItems = postsId.map((postId:string) =>

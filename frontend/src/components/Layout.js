@@ -36,7 +36,6 @@ const useStyles = makeStyles(() => ({
 
 const Layout = () => {
     const classes = useStyles();
-    const token = sessionStorage.getItem('token');
     return (
         <>
             <div className='header'><Banner /></div>

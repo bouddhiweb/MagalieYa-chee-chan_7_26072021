@@ -6,6 +6,8 @@ import useToken from "../constants/useToken";
 function App() {
     const { token, setToken } = useToken();
     console.log(token);
+
+
     if(!token || token === 'undefined') {
         return <Login setToken={setToken} />
     }

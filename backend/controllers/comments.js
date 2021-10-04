@@ -23,7 +23,7 @@ exports.create = (req, res, next) => {
 exports.delete = (req, res, next) => {
     console.log(req)
     try {
-        const token = req.headers.authorization;
+        const token = req.body.token;
         let user = utils.getUser(token);
         if (user === undefined) {
             throw 'Token expiré ou inconnu'
@@ -51,7 +51,7 @@ exports.delete = (req, res, next) => {
 //Affichage de la liste des commentaire (ordre chronologique) d'un post/gif
 exports.list = (req, res, next) => {
     try {
-        const token = req.headers.authorization;
+        const token = req.body.token;
         let user = utils.getUser(token);
         if (user === undefined) {
             throw 'Token expiré ou inconnu'

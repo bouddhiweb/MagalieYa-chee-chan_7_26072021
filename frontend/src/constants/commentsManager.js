@@ -1,43 +1,32 @@
+import axios from 'axios';
+const DELETE_COMMENT_URL = 'http://localhost:3000/comment/delete';
+const ADD_COMMENT_URL = 'http://localhost:3000/comment/create';
+
 export const deleteOneComment = (datas) => {
-    // console.log(datas)
     const userId = datas.userId;
     const token = datas.token;
     const commentId = datas.commentId;
 
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", token);
-    myHeaders.append("Accept", 'application/json');
-    myHeaders.append("Content-Type", 'application/json');
-
-    const raw = {
+    const data = {
         userId: userId,
         token: token,
         commentId: commentId
     };
-    console.log(myHeaders);
-    const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow',
-        body: JSON.stringify(raw),
-    };
-
-    fetch("http://localhost:3000/comment/delete", requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+    axios
+        .post(DELETE_COMMENT_URL, data)
+        .then((res) => {
+            console.log(res)
+        })
+        .catch((err) => {
+            alert("erreur : " + err)
+        });
 }
 
-export const add = (datas) => {
+export const addComment = (datas) => {
     const userId = datas.userId;
     const token = datas.token;
     const postId = datas.postId;
     const body = datas.body;
-
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", token);
-    myHeaders.append("Accept", 'application/json');
-    myHeaders.append("Content-Type", 'application/json');
 
     const raw = {
         userId: userId,
@@ -45,42 +34,15 @@ export const add = (datas) => {
         token: token,
         body: body
     };
-    const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow',
-        body: JSON.stringify(raw),
-    };
 
-    fetch("http://localhost:3000/comment/create", requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+    axios
+        .post(ADD_COMMENT_URL, raw)
+        .then((res) => {
+            console.log(res)
+        })
+        .catch((err) => {
+            alert("erreur : " + err)
+        });
 }
 
-export const display = (datas) => {
-    const token = datas.token;
-    const postId = datas.postId;
-
-    const myHeaders = new Headers();
-    myHeaders.append("Authorization", token);
-    myHeaders.append("Accept", 'application/json');
-    myHeaders.append("Content-Type", 'application/json');
-
-    const raw = {
-        postId: postId,
-        token: token,
-    };
-    const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        redirect: 'follow',
-        body: JSON.stringify(raw),
-    };
-
-    fetch("http://localhost:3000/comment/list", requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
-}
 

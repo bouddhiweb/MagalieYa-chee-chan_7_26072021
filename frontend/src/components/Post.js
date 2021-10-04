@@ -1,6 +1,6 @@
 import {useState} from "react";
 import '../style/main.scss';
-import axios from "axios";
+import {createOnePost} from "../constants/postsManager";
 
 const Post = () => {
     const [url, setUrl] = useState('');
@@ -18,18 +18,8 @@ const Post = () => {
         formData.append("userId", userId);
         formData.append("file", file);
         formData.append("url", url);
+        createOnePost(formData)
 
-        const CREATE_POST_URL = 'http://localhost:3000/content/create';
-        axios
-            .post(CREATE_POST_URL, formData)
-            .then((res) => {
-
-                alert("Ton gif a bien été posté !");
-            })
-            .catch((err) => {
-
-                alert("erreur : " + err)
-            });
     }
 
     return (

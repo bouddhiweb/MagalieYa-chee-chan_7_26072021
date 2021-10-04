@@ -3,7 +3,6 @@ const connection = require("../models/connection");
 
 //Création d'un post
 exports.create = (req, res, next) => {
-    console.log(req.file.path)
     try {
         let urlToSave;
         const urlPattern = /(https:\/\/media.giphy\.com\/media\/)(.*)/;
@@ -38,7 +37,7 @@ exports.create = (req, res, next) => {
 //Suppression d'un post
 exports.delete = (req, res, next) => {
     try {
-        const token = req.headers.authorization;
+        const token = req.body.token;
         let user = utils.getUser(token);
         if (user === undefined) {
             throw 'Token expiré ou inconnu'

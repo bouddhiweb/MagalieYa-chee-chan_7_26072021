@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 
 // Enregistre un nouvel utilisateur
 exports.signup = async (req, res, next) => {
+    console.log(req.body)
     // Password is not acceptable
     if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.{6,})/.test(req.body.password)) {   // Test password strength
         return res.status(401).json({ error: 'Le mot de passe doit contenir une lettre majuscule, une minuscule et au moins 1 chiffre (6 caractères min)' });
@@ -22,14 +23,14 @@ exports.signup = async (req, res, next) => {
                     email: req.body.email,
                     password: hash
                 }
+                // console.log(userForm)
+
                 try {
                     const checkDB ="SELECT email FROM users WHERE email=" + connection.escape(userForm.email);
                     const addUser = "INSERT INTO users (username, email, password) values (" + connection.escape(userForm.username) + ", " + connection.escape(userForm.email) + ", '" + hash + "')";
                     connection.connect((err) => {
                         connection.query(checkDB,(err,rows) => {
                             const user = rows[0];
-                            // console.log(rows);
-                            // console.log(user);
                             if(user === undefined) {
                                 connection.query(addUser,(err,rows) => {
                                     res.status(201).json({
@@ -123,10 +124,11 @@ exports.userlist = (req, res, next) => {
 
 //Changement de mot de passe
 exports.delete = (req, res, next) => {
-    // console.log(req.body)
     try {
-        const token = req.headers.authorization;
+        const token = req.body.token;
         let user = utils.getUser(token);
+        // console.log(user)
+
         if (user === undefined) {
             throw 'Token expiré ou inconnu'
         }
