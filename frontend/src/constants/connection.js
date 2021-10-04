@@ -33,5 +33,5 @@ export default function Connection(datas) {
             sessionStorage.setItem('role', role);
             myHeaders.append("Token", token);
         })
-        .catch(error => console.log('error', error));
+        .catch(error => alert(error));
 }

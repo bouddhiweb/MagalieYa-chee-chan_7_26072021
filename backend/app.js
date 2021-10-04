@@ -3,6 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+const path = require('path');
+console.log(path.join(__dirname, 'image'))
+app.use('/image', express.static(path.join(__dirname, 'image')));
 
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
@@ -17,6 +20,7 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.json());
 app.use(cors());
+
 
 app.use('/auth', userRoutes);
 app.use('/content', postRoutes);

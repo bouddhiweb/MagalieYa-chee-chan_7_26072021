@@ -8,13 +8,17 @@ import TextField from "@material-ui/core/TextField";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import IconButton from "@material-ui/core/IconButton";
 import SendIcon from "@material-ui/icons/Send";
-
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 export default function HomePage() {
+    let [token, setToken]:any = useState(sessionStorage.getItem('token'));
+    let [userId, setUserId]:any = useState(sessionStorage.getItem('userId'));
+    let [username, setUsername]:any = useState(sessionStorage.getItem('username'));
     let [data, setItems]:any = useState({});
     let [commentDatas, setComments]:any = useState({});
     let [body, setBody] = useState("");
     let [pId, setpId] = useState("");
+    const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {
         const myHeaders = new Headers();
@@ -23,14 +27,21 @@ export default function HomePage() {
             method: 'GET',
             redirect: 'follow'
         };
+         setInterval(() => {
 
         fetch("http://localhost:3000/content/list", requestOptions)
             .then(response => response.json())
             .then(result  => {
+                setIsLoaded(true);
                 setItems(result)
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                setIsLoaded(true);
+                console.log('error', error)
+            });
+         }, 250)
     },[])
+
 
     const postsId:any = [];
     const postsDate:any = [];
@@ -38,7 +49,6 @@ export default function HomePage() {
     const commentsDate:any = [];
 
     const display = (datas:any) => {
-        const token:any = sessionStorage.getItem('token');
         const postId = datas.postId;
         const myHeaders = new Headers();
         myHeaders.append("Authorization", token);
@@ -54,12 +64,14 @@ export default function HomePage() {
             redirect: 'follow',
             body: JSON.stringify(raw),
         };
-        fetch("http://localhost:3000/comment/list", requestOptions)
-            .then(response => response.text())
-            .then(result => {
-                const res = JSON.parse(result);
-                setComments(res)
-            })
+         setInterval(() => {
+                fetch("http://localhost:3000/comment/list", requestOptions)
+                    .then(response => response.text())
+                    .then(result => {
+                        const res = JSON.parse(result);
+                        setComments(res)
+                    })
+         }, 250)
     }
 
     for(let i = 0; i < data.length; i++) {
@@ -89,8 +101,6 @@ export default function HomePage() {
 
     const deletePost = (e:any) => {
         e.preventDefault();
-        const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
         const postId = e.currentTarget.title;
         let datas = {
             token : token,
@@ -109,8 +119,6 @@ export default function HomePage() {
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
-        const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
         let datas = {
             token : token,
             userId: userId,
@@ -122,8 +130,6 @@ export default function HomePage() {
     }
 
     const deleteComment = (e:any) => {
-        const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
         const commentId = e.target.id;
         let datas = {
             token : token,
@@ -135,7 +141,6 @@ export default function HomePage() {
 
     const displayComments = (e:any) => {
         e.preventDefault();
-        const token = sessionStorage.getItem('token');
         const postId = e.currentTarget.title;
         let datas = {
             token : token,
@@ -155,10 +160,11 @@ export default function HomePage() {
             </li>
             <hr/>
             <li className='feed__post__content'>
-                <iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />
+                {/*<iframe src={data[postId].url} width="480" height="311" frameBorder="0" className="giphy-embed" title={data[postId].username} allowFullScreen />*/}
+                <img width="400" src={data[postId].url} alt={data[postId].title}/>
             </li>
             <div>
-                <span className='white-text' title={data[postId].id} onClick={displayComments}>Commentaires</span>
+                <span className='white-text__link' title={data[postId].id} onClick={displayComments}><ChevronRightIcon/> Afficher les commentaires</span>
                 {/*Affichage des commentaires qui dépendent du post */}
                 {commentsId.map((commentId: string) => <div className='white-text'> {commentDatas[commentId].id_post === data[postId].id ? <li className='white-text comments-form'><b>{commentDatas[commentId].username} :</b> {commentDatas[commentId].body}
                     <p className='deleteComment' id={commentDatas[commentId].id} onClick={deleteComment}>Supprimer ce commentaire</p></li> : ''}</div>)}
@@ -174,7 +180,7 @@ export default function HomePage() {
     );
     return (
         <div className='feed__box'>
-            <h2>Bonjour, </h2>
+            <h2 className='feed__title'>Hello {username} !</h2>
             <Post />
             <h2 className='feed__title'>Fil d'actualité</h2>
             <div>{listItems}</div>

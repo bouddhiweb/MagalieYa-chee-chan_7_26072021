@@ -1,12 +1,11 @@
 import '../style/main.scss';
 import {useEffect, useState} from "react";
-import IconButton from "@material-ui/core/IconButton";
-import SendIcon from "@material-ui/icons/Send";
-import {changePwd} from "../constants/usersManager";
+import axios from "axios";
 
 export default function ProfilPage() {
     const username = sessionStorage.getItem('username');
     const role = sessionStorage.getItem('role');
+    const userId = sessionStorage.getItem('userId');
     let [data, setItems]:any = useState({});
     let [newPassword, setNewPassword]:any = useState({});
     const token:any = sessionStorage.getItem('token');
@@ -28,78 +27,45 @@ export default function ProfilPage() {
             .catch(error => console.log('error', error));
     }, []);
 
-    const handleNewPassword = (e:any) => {
-        setNewPassword(e.target.value);
-    }
-    const handleSubmit = (e:any) => {
-        e.preventDefault();
-        let datas = {
-            token: token,
-            userId: e.currentTarget.id,
-            newPassword: newPassword,
-        }
-        changePwd(datas);
-        e.target.reset();
-    }
+
 
     const handleClick = () => {
         sessionStorage.clear();
         document.location.reload();
     }
 
-    const handleUnsubscribe = () => {
+    const handleUnsubscribe = (e:any) => {
+        e.preventDefault();
+        alert('Tu es sûr(e) de vouloir supprimer ton compte ?')
+        let datas = {
+            token: token,
+            userId: userId,
+        }
+
+        const DELETE_ACCOUNT_URL = 'http://localhost:3000/auth/delete';
+        axios
+            .post(DELETE_ACCOUNT_URL , datas)
+            .then((res) => {
+
+                alert("Ton gif a bien été posté !");
+            })
+            .catch((err) => {
+
+                alert("erreur : " + err)
+            });
 
     }
-
-    const usersId:any = [];
-    for(let i = 0; i < data.length; i++) {
-        usersId.push(i);
-    }
-
-    const usersList = usersId.map((userId:string) =>
-        /* Itération des posts */
-        <tbody>
-        <tr>
-            <td>{data[userId].username}</td>
-            <td>{data[userId].email}</td>
-            <td>{data[userId].isAdmin === 1 ? 'Admin' : 'Utilisateur'}</td>
-            <td>Supprimer</td>
-            <td>Nouveau mot de passe : <form id={data[userId].id} onSubmit={handleSubmit}><input onInput={handleNewPassword} type="text"/>
-                <IconButton type="submit" className="Mui-focused" aria-label="add a comment">
-                    <SendIcon />
-                </IconButton>
-            </form></td>
-        </tr>
-        </tbody>
-
-    );
 
     return(
-        <div className='feed__box'>
+        <div className='darkTheme--profilContainer'>
 
             <h1 className='feed__title'>Hello {username} !</h1>
-            <p>Que souhaites-tu faire ?</p>
-            <ul>
-                <li><a href={'/login'} onClick={handleClick}>Me déconnecter</a></li>
-                <li><a href={'/register'} onClick={handleUnsubscribe}>Me désinscrire</a></li>
+            <p className='white-text'>Que souhaites-tu faire ?</p>
+            <ul >
+                <li><a className='white-text__link' href={'/index'} onClick={handleClick}>Me déconnecter</a></li>
+                <li><a className='white-text__link' href={'/register'} onClick={handleUnsubscribe}>Me désinscrire</a></li>
             </ul>
-            {role === '0' ? <p>Amuse toi bien !</p> :  <div>
-                <h2>Gestion des utilisateur</h2>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Liste des utilisateurs</th>
-                    </tr>
-                    <tr>
-                        <th>Noms</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th colSpan={2}>Modération</th>
-                    </tr>
-                    </thead>
-                    {usersList}
-                </table>
-            </div> }
+            {role === '0' ? <p className='white-text'>Amuse toi bien !</p> :  <p className='white-text'>Tu as un statut Administrateur !</p> }
 
         </div>
     )

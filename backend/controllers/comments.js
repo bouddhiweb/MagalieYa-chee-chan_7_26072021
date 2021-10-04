@@ -3,7 +3,7 @@ const connection = require("../models/connection");
 
 //Création d'un commentaire
 exports.create = (req, res, next) => {
-    console.log(req)
+    // console.log(req)
     try {
         const token = req.headers.authorization;
         const addComment = "INSERT INTO comments (id_user, id_post, body) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.postId) + ", " + connection.escape(req.body.body) + ")";

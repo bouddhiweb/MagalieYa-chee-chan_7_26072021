@@ -2,7 +2,6 @@
 //import
 let jwt = require('jsonwebtoken')
 
-
 module.exports = {
     tokenSign : process.env.TOKEN_SECRET,
     getUser: (data) => {

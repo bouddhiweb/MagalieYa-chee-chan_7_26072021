@@ -3,29 +3,31 @@ const connection = require("../models/connection");
 
 //Création d'un post
 exports.create = (req, res, next) => {
+    console.log(req.file.path)
     try {
-        //TODO:Si fichier => l'enregistrer avec multer + créer l'url /image/[nom fichier]
-        const urlPattern = /(https:\/\/giphy\.com\/embed\/)(.*)/;
+        let urlToSave;
+        const urlPattern = /(https:\/\/media.giphy\.com\/media\/)(.*)/;
         const urlSubmitted = req.body.url;
-        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + connection.escape(req.body.url) + ")";
+        let matchRegex = urlSubmitted.match(urlPattern);
 
-        if (urlSubmitted.match(urlPattern)) {
+        if (matchRegex) {
+            urlToSave = "'" + urlSubmitted + "'";
+        } else {
+            urlToSave = "'" + `${req.protocol}://${req.get('host')}/${req.file.path.replace('\\', '/')}` + "'";
+        }
+
+        const addPost = "INSERT INTO gifs (id_user, title, url) VALUES (" + connection.escape(req.body.userId) + ", " + connection.escape(req.body.title) + ", " + urlToSave + ")";
+
             connection.connect((err) => {
                 connection.query(addPost, (err, rows) => {
                     let JSONgif = {
                         title:req.body.title,
                         postId:rows.insertId,
-                        url: urlSubmitted,
+                        url: urlToSave,
                     }
                     res.status(200).json(JSONgif)
                 })
             })
-        } else {
-            res.status(400).json({
-                error: "L'URL doit commencer par https://giphy.com/embed"
-            })
-        }
-
     } catch (e) {
         res.status(500).json({
             error: e

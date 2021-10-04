@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const deleteOnePost = (datas) => {
     const userId = datas.userId;
     const token = datas.token;
@@ -27,11 +29,12 @@ export const deleteOnePost = (datas) => {
 }
 
 export const AddPost = (datas) => {
-    // console.log(datas)
+    console.log(datas)
     const userId = datas.userId;
     const token = datas.token;
     const title = datas.title;
     const url = datas.url;
+    const gif = datas.file;
     const myHeaders = new Headers();
     myHeaders.append("Authorization", token);
     myHeaders.append("Accept", 'application/json');
@@ -42,8 +45,9 @@ export const AddPost = (datas) => {
         token: token,
         title: title,
         url: url,
+        gif: gif
     };
-    // console.log(myHeaders);
+     console.log(myHeaders);
     const requestOptions = {
         method: 'POST',
         headers: myHeaders,
@@ -52,7 +56,16 @@ export const AddPost = (datas) => {
     };
 
     fetch("http://localhost:3000/content/create", requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
+        .then(response => {
+            if(response.status === 200 ) {
+                response.json()
+            } else {
+                console.log(response.status)
+                // TODO:gérer l'erreur / afficher l'erreur
+            }
+        })
+        .then(result => {
+            console.log(result)
+        })
         .catch(error => console.log('error', error));
 }
