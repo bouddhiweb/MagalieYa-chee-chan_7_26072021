@@ -2,7 +2,7 @@
 # webstorm
 /.idea
 # dependencies
-/backend/node_modules
+*/node_modules
 /.pnp
 .pnp.js
 
