@@ -47,17 +47,16 @@ export default function HomePage() {
             token : token,
             postId: postId,
         };
-        setInterval(() => {
+
         axios
             .post(COMMENTLIST_URL, datas)
             .then((res) => {
                 setComments(res.data)
             })
             .catch((err) => {
-
                 alert("erreur : " + err)
             });
-        }, 250)
+
     }
 
     for(let i = 0; i < data.length; i++) {
